@@ -1,23 +1,42 @@
 body {
   font-family: Arial, sans-serif;
   margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f4f4f4; /* Cor de fundo neutra */
+}
+
+h1 {
+  font-size: 24px; /* Diminuindo o tamanho do título */
+  margin-bottom: 20px;
 }
 
 .task-group {
   margin-bottom: 20px;
+  width: 100%;
+  max-width: 600px; /* Limita a largura máxima */
+  background: #ffffff; /* Fundo branco para as tarefas */
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  padding: 15px;
 }
 
 .task {
   margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  background: #e9ecef; /* Fundo suave para as tarefas */
 }
 
 .progress-bar {
   display: flex;
-  height: 20px;
+  height: 12px; /* Menor altura para melhor visualização */
   width: 100%;
   background-color: #f3f3f3;
   border-radius: 5px;
   overflow: hidden;
+  margin-top: 5px;
 }
 
 .progress {
@@ -25,11 +44,11 @@ body {
 }
 
 .work {
-  background-color: #4caf50; /* Cor para trabalho */
+  background-color: #4caf50; /* Verde para trabalho */
 }
 
 .pause {
-  background-color: #ff9800; /* Cor para pausa */
+  background-color: #ff9800; /* Laranja para pausa */
 }
 
 .task-buttons {
@@ -38,11 +57,39 @@ body {
 
 button {
   margin-right: 5px;
-  padding: 5px 10px;
+  padding: 10px 15px; /* Botões maiores */
+  font-size: 14px; /* Diminuindo o tamanho do texto dos botões */
   cursor: pointer;
+  border: none;
+  border-radius: 5px; /* Bordas arredondadas nos botões */
+  background-color: #007bff; /* Cor de fundo azul padrão */
+  color: white; /* Texto branco */
+  transition: background-color 0.3s; /* Transição suave para o fundo */
+}
+
+button:hover {
+  background-color: #0056b3; /* Cor ao passar o mouse */
 }
 
 button.disabled {
-  background-color: #ccc;
+  background-color: #ccc; /* Cor para botão desabilitado */
   cursor: not-allowed;
+}
+
+input[type="text"],
+input[type="number"] {
+  padding: 10px;
+  font-size: 14px; /* Diminuindo o tamanho do texto dos inputs */
+  border-radius: 5px; /* Bordas arredondadas */
+  border: 1px solid #ccc; /* Borda leve */
+  margin-right: 5px;
+  width: 100%; /* Largura total */
+  max-width: 200px; /* Limita a largura máxima dos inputs */
+}
+
+@media (max-width: 600px) {
+  button {
+      width: 100%; /* Botões ocupam a largura total em dispositivos móveis */
+      margin-top: 5px;
+  }
 }

@@ -8,28 +8,14 @@ const taskGroupsData = {
             endTime: null,
             tasks: [
                 { id: 1, name: "Corte LE", duration: 0, pauseTime: 0, maxDuration: 10, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false },
-                { id: 2, name: "Corte TE", duration: 0, pauseTime: 0, maxDuration: 15, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false },
-                { id: 3, name: "Corte de régua", duration: 0, pauseTime: 0, maxDuration: 20, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false }
-            ]
-        },
-        {
-            name: "Limpeza",
-            totalTimeSpent: 0,
-            startTime: null,
-            endTime: null,
-            tasks: [
-                { id: 1, name: "Limpeza de sala", duration: 0, pauseTime: 0, maxDuration: 30, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false },
-                { id: 2, name: "Limpeza de banheiro", duration: 0, pauseTime: 0, maxDuration: 25, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false }
-            ]
-        },
-        {
-            name: "Manutenção",
-            totalTimeSpent: 0,
-            startTime: null,
-            endTime: null,
-            tasks: [
-                { id: 1, name: "Troca de lâmpada", duration: 0, pauseTime: 0, maxDuration: 15, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false },
-                { id: 2, name: "Verificação de encanamento", duration: 0, pauseTime: 0, maxDuration: 30, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false }
+                { id: 2, name: "Corte TE", duration: 0, pauseTime: 0, maxDuration: 10, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false },
+                { id: 3, name: "Corte de Régua", duration: 0, pauseTime: 0, maxDuration: 15, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false },
+                { id: 4, name: "Fibra de Sacrifício LE", duration: 0, pauseTime: 0, maxDuration: 10, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false },
+                { id: 5, name: "Fibra de Sacrifício TE", duration: 0, pauseTime: 0, maxDuration: 10, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false },
+                { id: 6, name: "Interno LE", duration: 0, pauseTime: 0, maxDuration: 10, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false },
+                { id: 7, name: "Interno TE", duration: 0, pauseTime: 0, maxDuration: 10, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false },
+                { id: 8, name: "Polimento LE", duration: 0, pauseTime: 0, maxDuration: 10, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false },
+                { id: 9, name: "Polimento TE", duration: 0, pauseTime: 0, maxDuration: 10, isRunning: false, isPaused: false, pauseStartTime: null, startTime: null, endTime: null, isPauseCounting: false }
             ]
         }
     ]
@@ -136,40 +122,28 @@ const pauseTask = (groupName, taskId) => {
 
     if (task.isRunning) {
         clearInterval(intervals[taskId]); // Para o intervalo da tarefa
-        task.isRunning = false; // Tarefa não está mais em andamento
-
-        // Iniciar o contador de pausa
+        task.isRunning = false;
         task.isPaused = true;
-        task.pauseStartTime = new Date();
+
+        // Iniciar contagem de pausa
         pauseIntervals[taskId] = setInterval(() => {
             task.pauseTime += 1; // Incrementar o tempo de pausa
             renderTaskGroups();
         }, 1000); // Atualiza a cada segundo
-
-        renderTaskGroups();
     }
 };
 
-// Função para marcar tarefa como concluída
+// Função para concluir a tarefa
 const completeTask = (groupName, taskId) => {
     const group = taskGroupsData.taskGroups.find(g => g.name === groupName);
     const task = group.tasks.find(t => t.id === taskId);
-    task.isRunning = false; // Para a tarefa
-    clearInterval(intervals[taskId]); // Para o intervalo
 
-    if (task.isPaused) {
-        clearInterval(pauseIntervals[taskId]); // Para o contador de pausa, se estiver pausado
-    }
+    clearInterval(intervals[taskId]);
+    clearInterval(pauseIntervals[taskId]);
 
-    // Registrar o tempo de término da tarefa
-    if (!task.endTime) {
-        task.endTime = new Date();
-    }
-
-    // Se todas as tarefas do grupo foram concluídas, registrar o tempo de término do grupo
-    if (group.tasks.every(t => t.endTime !== null)) {
-        group.endTime = new Date();
-    }
+    task.isRunning = false;
+    task.isPaused = false;
+    task.endTime = new Date();
 
     renderTaskGroups();
 };
@@ -177,12 +151,45 @@ const completeTask = (groupName, taskId) => {
 // Função para remover a tarefa
 const removeTask = (groupName, taskId) => {
     const group = taskGroupsData.taskGroups.find(g => g.name === groupName);
-    const taskIndex = group.tasks.findIndex(t => t.id === taskId);
-    if (taskIndex > -1) {
-        group.tasks.splice(taskIndex, 1);
+    group.tasks = group.tasks.filter(t => t.id !== taskId);
+    renderTaskGroups();
+};
+
+// Função para adicionar uma nova tarefa
+const addTask = () => {
+    const taskName = document.getElementById("taskName").value;
+    const taskMaxDuration = parseInt(document.getElementById("taskMaxDuration").value);
+
+    if (taskName && taskMaxDuration > 0) {
+        const group = taskGroupsData.taskGroups[0]; // Adiciona à primeira tarefa para o exemplo
+
+        const newTask = {
+            id: group.tasks.length + 1, // ID simples baseado no comprimento da lista
+            name: taskName,
+            duration: 0,
+            pauseTime: 0,
+            maxDuration: taskMaxDuration,
+            isRunning: false,
+            isPaused: false,
+            pauseStartTime: null,
+            startTime: null,
+            endTime: null,
+            isPauseCounting: false
+        };
+
+        group.tasks.push(newTask);
         renderTaskGroups();
+
+        // Limpar campos após adicionar a tarefa
+        document.getElementById("taskName").value = '';
+        document.getElementById("taskMaxDuration").value = '';
+    } else {
+        alert("Por favor, preencha o nome da tarefa e a duração máxima.");
     }
 };
 
-// Renderizar as tarefas na inicialização
+// Adiciona evento de clique ao botão de adicionar tarefa
+document.getElementById("addTaskButton").addEventListener("click", addTask);
+
+// Renderizar as tarefas ao carregar a página
 renderTaskGroups();
